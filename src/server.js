@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import GitHubApi from 'github';
 import flatMap from './flatMap';
 import eslintAdapter from './eslintAdapter';
+import stylelintAdapter from './stylelintAdapter';
 
 // Github configuration
 
@@ -43,7 +44,8 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
     .then((files, fetchContent) => flatMap([
-      eslintAdapter(fetchContent)(files)
+      eslintAdapter(fetchContent)(files),
+      stylelintAdapter(fetchContent)(files)
     ]))
     .then(review => {
       github.pullRequests.createReview({
