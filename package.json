@@ -1,0 +1,35 @@
+{
+  "name": "violator-bot",
+  "version": "1.0.0",
+  "description": "A bot listening to github webhooks, running linters and sending pull-request reviews.",
+  "main": "lib/server.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "start": "yarn build && node lib/server.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^6.1.2",
+    "babel-preset-env": "^1.6.0",
+    "body-parser": "^1.13.3",
+    "eslint": "^2.1.0",
+    "express": "^4.16.2",
+    "github": "^11.0.0"
+  },
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tobiashm/violator-bot"
+  },
+  "author": "Tobias H. Michaelsen",
+  "keywords": [
+    "node",
+    "heroku",
+    "express",
+    "eslint",
+    "stylelint"
+  ],
+  "license": "MIT"
+}

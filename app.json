@@ -1,0 +1,14 @@
+{
+  "name": "GitHub linter",
+  "description": "A bot listening to github webhooks, running linters and sending reviews on every pull-request.",
+  "repository": "https://github.com/tobiashm/violator-bot",
+  "keywords": [
+    "node",
+    "express",
+    "github",
+    "eslint",
+    "stylelint",
+    "javascript"
+  ],
+  "image": "heroku/nodejs"
+}
