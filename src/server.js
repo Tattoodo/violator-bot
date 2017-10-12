@@ -1,69 +1,9 @@
 // Dependencies
 import express from 'express';
 import bodyParser from 'body-parser';
-import GitHubApi from 'github';
-import flatMap from './flatMap';
+import processPullRequest from './processPullRequest';
 import eslintAdapter from './eslintAdapter';
 import stylelintAdapter from './stylelintAdapter';
-
-const config = {
-  username: process.env.GITHUB_USERNAME,
-  password: process.env.GITHUB_PASSWORD
-}
-
-Object.keys(config).forEach(key => {
-  if (!config[key]) {
-    console.error(`Missing ${key} config! Exiting...`);
-    process.exit(1);
-  }
-})
-
-// Github configuration
-
-const github = new GitHubApi();
-
-github.authenticate(Object.assign({ type: 'basic' }, config));
-
-// Functions
-
-const translatePayload = ({ organization, repository, number, after }) => ({
-  owner: organization.login,
-  repo: repository.name,
-  number,
-  commit_id: after
-});
-
-const files = (owner, repo, number) =>
-  github.pullRequests.getFiles({
-    owner,
-    repo,
-    number
-  }).then(response => response.data)
-
-const makeContentFetcher = (owner, repo, commit_id) => file =>
-  github.repos.getContent({
-    owner,
-    repo,
-    path: file.filename,
-    ref: file.sha || commit_id
-  }).then(response => Buffer.from(response.data.content, 'base64').toString());
-
-const processPullRequest = ({ owner, repo, number, commit_id }) =>
-  files(owner, repo, number)
-    .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
-    .then((files, fetchContent) => flatMap([
-      eslintAdapter(fetchContent)(files),
-      stylelintAdapter(fetchContent)(files)
-    ]))
-    .then(review => {
-      github.pullRequests.createReview({
-        owner,
-        repo,
-        number,
-        commit_id,
-        comments: reviews.filter(review => review)
-      });
-    });
 
 // Server
 
@@ -79,8 +19,9 @@ app.get('/', (_, response) => {
 
 app.post('/', ({ headers, body: payload }, response) => {
   const actions = ['create', 'synchronize'];
-  if (headers['X-GitHub-Event'] === 'pull_request' && payload && actions.include(payload.action)) {
-    processPullRequest(translatePayload(payload));
+  const isProcessablePullRequest = headers['X-GitHub-Event'] === 'pull_request' && actions.include(payload.action);
+  if (isProcessablePullRequest) {
+    processPullRequest(payload);
   }
   response.end();
 });
