@@ -6,15 +6,23 @@ import flatMap from './flatMap';
 import eslintAdapter from './eslintAdapter';
 import stylelintAdapter from './stylelintAdapter';
 
+const config = {
+  username: process.env.GITHUB_USERNAME,
+  password: process.env.GITHUB_PASSWORD
+}
+
+Object.keys(config).forEach(key => {
+  if (!config[key]) {
+    console.error(`Missing ${key} config! Exiting...`);
+    process.exit(1);
+  }
+})
+
 // Github configuration
 
 const github = new GitHubApi();
 
-github.authenticate({
-  type: 'basic',
-  username: process.env.GITHUB_USERNAME,
-  password: process.env.GITHUB_PASSWORD
-});
+github.authenticate(Object.assign({ type: 'basic' }, config));
 
 // Functions
 
