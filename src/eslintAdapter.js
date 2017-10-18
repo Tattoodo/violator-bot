@@ -22,7 +22,7 @@ const lint = fetchContent => file =>
   fetchContent(file).then(content =>
     eslintMessages(content, file.filename)
       .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
-      .filet(review => review.position)
+      .filter(review => !!review.position)
   );
 
 export default fetchContent => files =>

@@ -25,7 +25,7 @@ const lint = fetchContent => file =>
     .then(messages =>
       messages
         .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
-        .filet(review => review.position)
+        .filter(review => !!review.position)
     );
 
 export default fetchContent => files =>
