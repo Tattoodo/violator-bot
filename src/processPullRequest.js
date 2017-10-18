@@ -49,12 +49,12 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
     .then(files => { console.log('--- processing files:', files.map(f => f.filename)); return files; })
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
-    .then((files, fetchContent) => flatMap([
+    .then((files, fetchContent) => Promise.all([
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
-    ]))
+    ]).then(flatMap))
     .then(reviews => { console.log('--- passing reviews', reviews); return reviews; })
-    .then(reviews => Promise.all(reviews).then(reviews => {
+    .then(reviews => {
       const review = {
         owner,
         repo,
@@ -64,7 +64,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
       };
       console.log('--- posting review:', review);
       github.pullRequests.createReview(review);
-    }))
+    })
     .catch(error => console.error('=== something bad happened!!!', error));
 
 export default payload =>
