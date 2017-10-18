@@ -19,8 +19,9 @@ const reviewMessage = (filename, lineMap) => ({ ruleId, message, line }) => ({
 });
 
 const lint = fetchContent => file =>
-  fetchContent(file).then(content =>
+  fetchContent(file).then(content => { console.log('--- eslint file:', file.filename); return content; }).then(content =>
     eslintMessages(content, file.filename)
+      .map(message => { console.log('--- eslint message:', message); return message; })
       .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
       .filter(review => !!review.position)
   );

@@ -21,7 +21,9 @@ const reviewMessage = (filename, lineMap) => ({ line, rule, severity, text }) =>
 
 const lint = fetchContent => file =>
   fetchContent(file)
+    .then(content => { console.log('--- stylelint file:', file.filename); return content; })
     .then(content => stylelintMessages(content, file.filename))
+    .then(messages => { console.log('--- stylelint messages:', messages); return messages; })
     .then(messages =>
       messages
         .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
