@@ -7,7 +7,7 @@ const FILE_FILTER = /.*(.js|.jsx)$/;
 const cli = new eslint.CLIEngine();
 
 const filterFiles = files =>
-  files.filter(({ filename }) => filename.match(FILE_FILTER));
+  files.filter(file => FILE_FILTER.test(file.filename));
 
 const eslintMessages = (content, filename) =>
   cli.executeOnText(content, filename).results[0].messages;

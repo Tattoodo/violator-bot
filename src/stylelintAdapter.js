@@ -5,7 +5,7 @@ import flatMap from './flatMap';
 const FILE_FILTER = /\.css$/;
 
 const filterFiles = files =>
-  files.filter(({ filename }) => filename.match(FILE_FILTER));
+  files.filter(file => FILE_FILTER.test(file.filename));
 
 const stylelintMessages = (content, filename) =>
   stylelint.lint({
