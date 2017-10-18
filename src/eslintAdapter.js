@@ -20,7 +20,7 @@ const reviewMessage = (filename, lineMap) => ({ ruleId, message, line }) => ({
 
 const lint = fetchContent => file =>
   fetchContent(file).then(content =>
-    eslintMessages(contents, file.filename)
+    eslintMessages(content, file.filename)
       .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
       .filet(review => review.position)
   );

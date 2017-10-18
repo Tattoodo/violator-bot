@@ -2,8 +2,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import processPullRequest from './processPullRequest';
-import eslintAdapter from './eslintAdapter';
-import stylelintAdapter from './stylelintAdapter';
 
 // Server
 

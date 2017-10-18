@@ -1,5 +1,7 @@
 import GitHubApi from 'github';
 import flatMap from './flatMap';
+import eslintAdapter from './eslintAdapter';
+import stylelintAdapter from './stylelintAdapter';
 
 const config = {
   username: process.env.GITHUB_USERNAME,
@@ -11,7 +13,7 @@ Object.keys(config).forEach(key => {
     console.error(`Missing ${key} config! Exiting...`);
     process.exit(1);
   }
-})
+});
 
 // Github configuration
 
