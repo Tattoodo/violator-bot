@@ -18,7 +18,7 @@ app.get('/', (_, response) => {
 });
 
 app.post('/', ({ headers, body: payload }, response) => {
-  const actions = ['create', 'synchronize'];
+  const actions = ['opened', 'reopened', 'synchronize'];
   const isProcessablePullRequest = headers['X-GitHub-Event'] === 'pull_request' && actions.include(payload.action);
   if (isProcessablePullRequest) {
     processPullRequest(payload);
