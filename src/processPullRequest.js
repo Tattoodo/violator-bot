@@ -51,7 +51,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]))
-    .then(review => {
+    .then(reviews => {
       github.pullRequests.createReview({
         owner,
         repo,
