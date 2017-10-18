@@ -2,12 +2,14 @@ import eslint from 'eslint';
 import getLineMapFromPatchString from './getLineMapFromPatchString';
 import flatMap from './flatMap';
 
-const FILE_FILTER = /.*(.js|.jsx)$/;
+const FILE_FILTER = /\.jsx?$/;
 
 const cli = new eslint.CLIEngine();
 
 const filterFiles = files =>
-  files.filter(file => FILE_FILTER.test(file.filename));
+  files
+    .map(file => { console.log('--- eslint filter file:', file.filename, FILE_FILTER.test(file.filename)); return file; })
+    .filter(file => FILE_FILTER.test(file.filename));
 
 const eslintMessages = (content, filename) =>
   cli.executeOnText(content, filename).results[0].messages;
