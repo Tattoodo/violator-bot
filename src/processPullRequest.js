@@ -53,7 +53,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]))
-    .then(reviews => {
+    .then(reviews => Promise.all(reviews).then(reviews => {
       const review = {
         owner,
         repo,
@@ -63,7 +63,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
       };
       console.log('--- posting review:', review);
       github.pullRequests.createReview(review);
-    });
+    }));
 
 export default payload =>
   processPullRequest(translatePayload(payload));
