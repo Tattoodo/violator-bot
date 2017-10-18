@@ -21,7 +21,10 @@ app.post('/', ({ headers, body: payload }, response) => {
   const actions = ['opened', 'reopened', 'synchronize'];
   const isProcessablePullRequest = headers['X-GitHub-Event'] === 'pull_request' && actions.include(payload.action);
   if (isProcessablePullRequest) {
+    console.log('process pull-request:', payload);
     processPullRequest(payload);
+  } else {
+    console.log('non-processable pull-request:', headers, payload);
   }
   response.end();
 });

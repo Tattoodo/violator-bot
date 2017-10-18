@@ -47,6 +47,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
     .then((files, fetchContent) => flatMap([
+      (files => console.log('processing files:', files) || [])(files),
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]))
