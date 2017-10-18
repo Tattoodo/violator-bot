@@ -33,7 +33,7 @@ const files = (owner, repo, number) =>
     owner,
     repo,
     number
-  }).then(response => response.data)
+  }).then(response => response.data);
 
 const makeContentFetcher = (owner, repo, commit_id) => file =>
   github.repos.getContent({
@@ -47,18 +47,20 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
     .then((files, fetchContent) => flatMap([
-      (files => console.log('processing files:', files) || [])(files),
+      (files => console.log('--- processing files:', files.map(f => f.filename)) || [])(files),
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]))
     .then(reviews => {
-      github.pullRequests.createReview({
+      const review = {
         owner,
         repo,
         number,
         commit_id,
         comments: reviews.filter(review => review)
-      });
+      };
+      console.log('--- posting review:', review);
+      github.pullRequests.createReview(review);
     });
 
 export default payload =>
