@@ -4,16 +4,15 @@ import flatMap from './flatMap';
 
 const FILE_FILTER = /\.css$/;
 
-const filterFiles = files =>
-  files
-    .map(file => { console.log('--- stylelint filter file:', file.filename, FILE_FILTER.test(file.filename)); return file; })
-    .filter(file => FILE_FILTER.test(file.filename));
+const CONFIG_FILE = `${__dirname}/../config/.stylelintrc`;
 
-const stylelintMessages = (content, filename) =>
-  stylelint.lint({
-    code: content,
-    codeFilename: filename
-  }).then(({ results: { warnings } }) => warnings);
+const filterFiles = files => files.filter(file => FILE_FILTER.test(file.filename));
+
+const stylelintMessages = (content, filename) => stylelint.lint({
+  code: content,
+  codeFilename: filename,
+  configFile: CONFIG_FILE
+}).then(output => output.results[0].warnings);
 
 const reviewMessage = (filename, lineMap) => ({ line, rule, severity, text }) => ({
   path: filename,
@@ -23,9 +22,7 @@ const reviewMessage = (filename, lineMap) => ({ line, rule, severity, text }) =>
 
 const lint = fetchContent => file =>
   fetchContent(file)
-    .then(content => { console.log('--- stylelint file:', file.filename); return content; })
     .then(content => stylelintMessages(content, file.filename))
-    .then(messages => { console.log('--- stylelint messages:', messages); return messages; })
     .then(messages =>
       messages
         .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))

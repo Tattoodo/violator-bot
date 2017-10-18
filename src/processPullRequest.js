@@ -42,28 +42,29 @@ const makeContentFetcher = (owner, repo, commit_id) => file =>
     owner,
     repo,
     path: file.filename,
-    ref: file.sha || commit_id
+    ref: commit_id
   }).then(response => Buffer.from(response.data.content, 'base64').toString());
 
 const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
-    .then(files => { console.log('--- processing files:', files.map(f => f.filename)); return files; })
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
     .then(([files, fetchContent]) => Promise.all([
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]).then(flatMap))
-    .then(reviews => { console.log('--- passing reviews', reviews); return reviews; })
-    .then(reviews => {
+    .then(comments => {
+      if (comments.length === 0) return;
       const review = {
         owner,
         repo,
         number,
         commit_id,
-        comments: reviews.filter(review => review)
+        event: 'REQUEST_CHANGES',
+        body: 'ESLint & stylelint violations found.',
+        comments
       };
       console.log('--- posting review:', review);
-      github.pullRequests.createReview(review);
+      return github.pullRequests.createReview(review);
     })
     .catch(error => console.error('=== something bad happened!!!', error));
 

@@ -4,12 +4,11 @@ import flatMap from './flatMap';
 
 const FILE_FILTER = /\.jsx?$/;
 
-const cli = new eslint.CLIEngine();
+const cli = new eslint.CLIEngine({
+  configFile: `${__dirname}/../config/.eslintrc`
+});
 
-const filterFiles = files =>
-  files
-    .map(file => { console.log('--- eslint filter file:', file.filename, FILE_FILTER.test(file.filename)); return file; })
-    .filter(file => FILE_FILTER.test(file.filename));
+const filterFiles = files => files.filter(file => FILE_FILTER.test(file.filename));
 
 const eslintMessages = (content, filename) =>
   cli.executeOnText(content, filename).results[0].messages;
@@ -21,9 +20,8 @@ const reviewMessage = (filename, lineMap) => ({ ruleId, message, line }) => ({
 });
 
 const lint = fetchContent => file =>
-  fetchContent(file).then(content => { console.log('--- eslint file:', file.filename); return content; }).then(content =>
+  fetchContent(file).then(content =>
     eslintMessages(content, file.filename)
-      .map(message => { console.log('--- eslint message:', message); return message; })
       .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
       .filter(review => !!review.position)
   );
