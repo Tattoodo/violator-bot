@@ -49,7 +49,7 @@ const processPullRequest = ({ owner, repo, number, commit_id }) =>
   files(owner, repo, number)
     .then(files => { console.log('--- processing files:', files.map(f => f.filename)); return files; })
     .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
-    .then((files, fetchContent) => Promise.all([
+    .then(([files, fetchContent]) => Promise.all([
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]).then(flatMap))
