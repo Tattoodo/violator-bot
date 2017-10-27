@@ -19,14 +19,15 @@ const reviewMessage = (filename, lineMap) => ({ ruleId, message, line }) => ({
   body: `**${ruleId}**: ${message}`
 });
 
-const lint = fetchContent => file =>
-  fetchContent(file).then(content =>
-    eslintMessages(content, file.filename)
+const lint = fetchContent => async file => {
+  const content = await fetchContent(file);
+  return eslintMessages(content, file.filename)
       .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
-      .filter(review => !!review.position)
-  );
+      .filter(review => !!review.position);
+};
 
-export default fetchContent => files =>
-  Promise.all(
-    filterFiles(files).map(lint(fetchContent))
-  ).then(flatMap);
+export default fetchContent => async files => {
+  files = filterFiles(files);
+  const reviews = await Promise.all(files.map(lint(fetchContent)));
+  return flatMap(reviews)
+};

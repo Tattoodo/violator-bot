@@ -30,43 +30,49 @@ const translatePayload = ({ organization, repository, number, pull_request }) =>
   commit_id: pull_request.head.sha
 });
 
-const files = (owner, repo, number) =>
-  github.pullRequests.getFiles({
+const getFiles = async (owner, repo, number) => {
+  const response = await github.pullRequests.getFiles({
     owner,
     repo,
     number
-  }).then(response => response.data);
+  });
+  return response.data;
+};
 
-const makeContentFetcher = (owner, repo, commit_id) => file =>
-  github.repos.getContent({
+const makeContentFetcher = (owner, repo, commit_id) => async file => {
+  const response = await github.repos.getContent({
     owner,
     repo,
     path: file.filename,
     ref: commit_id
-  }).then(response => Buffer.from(response.data.content, 'base64').toString());
+  })
+  return Buffer.from(response.data.content, 'base64').toString();
+};
 
-const processPullRequest = ({ owner, repo, number, commit_id }) =>
-  files(owner, repo, number)
-    .then(files => [files, makeContentFetcher(owner, repo, commit_id)])
-    .then(([files, fetchContent]) => Promise.all([
+const processPullRequest = async ({ owner, repo, number, commit_id }) => {
+  try {
+    const fetchContent = makeContentFetcher(owner, repo, commit_id);
+    const files = await getFiles(owner, repo, number);
+    const [eslintReviews, stylelintReviews] = await Promise.all([
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
-    ]).then(flatMap))
-    .then(comments => {
-      if (comments.length === 0) return;
-      const review = {
-        owner,
-        repo,
-        number,
-        commit_id,
-        event: 'REQUEST_CHANGES',
-        body: 'ESLint & stylelint violations found.',
-        comments
-      };
-      console.log('--- posting review:', review);
-      return github.pullRequests.createReview(review);
-    })
-    .catch(error => console.error('=== something bad happened!!!', error));
+    ]);
+    const comments = eslintReviews.concat(stylelintReviews);
+    if (comments.length === 0) return;
+    const review = {
+      owner,
+      repo,
+      number,
+      commit_id,
+      event: 'REQUEST_CHANGES',
+      body: 'ESLint & stylelint violations found.',
+      comments
+    };
+    console.log('--- posting review:', review);
+    return github.pullRequests.createReview(review);
+  } catch (error) {
+    console.error('=== something bad happened!!!', error);
+  }
+};
 
-export default payload =>
-  processPullRequest(translatePayload(payload));
+export default payload => processPullRequest(translatePayload(payload));
