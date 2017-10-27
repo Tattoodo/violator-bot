@@ -57,17 +57,20 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
       eslintAdapter(fetchContent)(files),
       stylelintAdapter(fetchContent)(files)
     ]);
-    const comments = eslintReviews.concat(stylelintReviews);
-    if (comments.length === 0) return;
+    const eslintViolations = eslintReviews.length > 0;
+    const stylelintViolations = stylelintReviews.length > 0;
+    const hasViolations = eslintViolations || stylelintViolations;
     const review = {
       owner,
       repo,
       number,
       commit_id,
-      event: 'REQUEST_CHANGES',
-      body: 'ESLint & stylelint violations found.',
-      comments
+      event: hasViolations ? 'REQUEST_CHANGES' : 'APPROVE',
+      comments: eslintReviews.concat(stylelintReviews)
     };
+    if (hasViolations) {
+      review.body = `${[eslintViolations && `ESLint`, stylelintViolations && `stylelint`].filter(s => s).join(` and `)} violations found.`;
+    }
     console.log('--- posting review:', review);
     await github.pullRequests.createReview(review);
   } catch (error) {
