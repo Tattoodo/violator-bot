@@ -69,7 +69,7 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
       comments
     };
     console.log('--- posting review:', review);
-    return github.pullRequests.createReview(review);
+    await github.pullRequests.createReview(review);
   } catch (error) {
     console.error('=== something bad happened!!!', error);
   }
