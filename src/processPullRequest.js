@@ -49,8 +49,21 @@ const makeContentFetcher = (owner, repo, commit_id) => async file => {
   return Buffer.from(response.data.content, 'base64').toString();
 };
 
+const createStatusSetter = (owner, repo, sha) => async (state, description) => {
+  await github.repos.createStatus({
+    owner,
+    repo,
+    sha,
+    state,
+    description,
+    context: 'violator-bot'
+  });
+};
+
 const processPullRequest = async ({ owner, repo, number, commit_id }) => {
   try {
+    const setStatus = createStatusSetter(owner, repo, commit_id);
+    setStatus('pending', 'Linting…');
     const fetchContent = makeContentFetcher(owner, repo, commit_id);
     const files = await getFiles(owner, repo, number);
     const [eslintReviews, stylelintReviews] = await Promise.all([
@@ -60,19 +73,21 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
     const eslintViolations = eslintReviews.length > 0;
     const stylelintViolations = stylelintReviews.length > 0;
     const hasViolations = eslintViolations || stylelintViolations;
-    const review = {
-      owner,
-      repo,
-      number,
-      commit_id,
-      event: hasViolations ? 'REQUEST_CHANGES' : 'APPROVE',
-      comments: eslintReviews.concat(stylelintReviews)
-    };
     if (hasViolations) {
-      review.body = `${[eslintViolations && `ESLint`, stylelintViolations && `stylelint`].filter(s => s).join(` and `)} violations found.`;
+      const review = {
+        owner,
+        repo,
+        number,
+        commit_id,
+        event: 'COMMENT',
+        comments: eslintReviews.concat(stylelintReviews)
+      };
+      console.log('--- posting review:', review);
+      await github.pullRequests.createReview(review);
+      setStatus('failure', `${[eslintViolations && `ESLint`, stylelintViolations && `stylelint`].filter(s => s).join(` and `)} violations found`);
+    } else {
+      setStatus('success', 'No linting violations found');
     }
-    console.log('--- posting review:', review);
-    await github.pullRequests.createReview(review);
   } catch (error) {
     console.error('=== something bad happened!!!', error);
   }
