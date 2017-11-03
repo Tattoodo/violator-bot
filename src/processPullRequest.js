@@ -1,5 +1,4 @@
 import GitHubApi from 'github';
-import flatMap from './flatMap';
 import eslintAdapter from './eslintAdapter';
 import stylelintAdapter from './stylelintAdapter';
 
@@ -22,13 +21,6 @@ const github = new GitHubApi();
 github.authenticate(Object.assign({ type: 'basic' }, config));
 
 // Functions
-
-const translatePayload = ({ organization, repository, number, pull_request }) => ({
-  owner: organization.login,
-  repo: repository.name,
-  number,
-  commit_id: pull_request.head.sha
-});
 
 const getFiles = async (owner, repo, number) => {
   const response = await github.pullRequests.getFiles({
@@ -93,4 +85,4 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
   }
 };
 
-export default payload => processPullRequest(translatePayload(payload));
+export default processPullRequest;
