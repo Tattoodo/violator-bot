@@ -22,8 +22,8 @@ const reviewMessage = (filename, lineMap) => ({ ruleId, message, line }) => ({
 const lint = fetchContent => async file => {
   const content = await fetchContent(file);
   return eslintMessages(content, file.filename)
-      .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
-      .filter(review => !!review.position);
+    .map(reviewMessage(file.filename, getLineMapFromPatchString(file.patch)))
+    .filter(review => !!review.position);
 };
 
 export default fetchContent => async files => {
