@@ -52,9 +52,22 @@ const createStatusSetter = (owner, repo, sha) => async (state, description) => {
   });
 };
 
+const postReview = async (owner, repo, number, commit_id, comments) => {
+  const review = {
+    owner,
+    repo,
+    number,
+    commit_id,
+    event: 'COMMENT',
+    comments
+  };
+  console.log('--- posting review:', review);
+  return github.pullRequests.createReview(review);
+};
+
 const processPullRequest = async ({ owner, repo, number, commit_id }) => {
+  const setStatus = createStatusSetter(owner, repo, commit_id);
   try {
-    const setStatus = createStatusSetter(owner, repo, commit_id);
     setStatus('pending', 'Linting…');
     const fetchContent = makeContentFetcher(owner, repo, commit_id);
     const files = await getFiles(owner, repo, number);
@@ -65,23 +78,23 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
     const eslintViolations = eslintReviews.length > 0;
     const stylelintViolations = stylelintReviews.length > 0;
     const hasViolations = eslintViolations || stylelintViolations;
+    let status = 'success';
+    let message = 'No linting violations found';
     if (hasViolations) {
-      const review = {
+      status = 'failure';
+      message = `${[eslintViolations && `ESLint`, stylelintViolations && `stylelint`].filter(s => s).join(` and `)} violations found`;
+      await postReview(
         owner,
         repo,
         number,
         commit_id,
-        event: 'COMMENT',
-        comments: eslintReviews.concat(stylelintReviews)
-      };
-      console.log('--- posting review:', review);
-      await github.pullRequests.createReview(review);
-      setStatus('failure', `${[eslintViolations && `ESLint`, stylelintViolations && `stylelint`].filter(s => s).join(` and `)} violations found`);
-    } else {
-      setStatus('success', 'No linting violations found');
+        eslintReviews.concat(stylelintReviews)
+      );
     }
+    setStatus(status, message);
   } catch (error) {
     console.error('=== something bad happened!!!', error);
+    setStatus('error', `Linting failed; ${error.message}`)
   }
 };
 
