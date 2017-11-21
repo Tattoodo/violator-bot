@@ -23,13 +23,15 @@ github.authenticate(Object.assign({ type: 'basic' }, config));
 
 // Functions
 
+const hasChanges = file => file.status !== 'removed' && file.changes > 0;
+
 const getFiles = async (owner, repo, number) => {
   const response = await github.pullRequests.getFiles({
     owner,
     repo,
     number
   });
-  return response.data;
+  return response.data.filter(hasChanges);
 };
 
 const makeContentFetcher = (owner, repo, commit_id) => async file => {
@@ -38,7 +40,7 @@ const makeContentFetcher = (owner, repo, commit_id) => async file => {
     repo,
     path: file.filename,
     ref: commit_id
-  })
+  });
   return Buffer.from(response.data.content, 'base64').toString();
 };
 
