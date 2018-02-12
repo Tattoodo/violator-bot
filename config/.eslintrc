@@ -28,6 +28,7 @@
   "rules": {
     "indent": [ "error", 4, { "SwitchCase": 1 } ],
     "jsx-quotes": [ "error", "prefer-double" ],
+    "no-trailing-spaces": [ "error" ],
     "quotes": [ "error", "single", { "allowTemplateLiterals": true } ],
     "semi": [ "error", "always" ],
     "babel/semi": [ "error", "always" ],
