@@ -34,6 +34,7 @@
     "babel/semi": [ "error", "always" ],
     "react/jsx-curly-spacing": [ "error", "never" ],
     "react/jsx-first-prop-new-line": [ "error" ],
+    "react/jsx-max-props-per-line": [ "error", { "maximum": 2 } ],
     "react/default-props-match-prop-types": 1,
     "react/display-name": 1,
     "react/no-did-mount-set-state": 1,
