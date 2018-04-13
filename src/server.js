@@ -2,15 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import processPullRequest from './processPullRequest';
-
-// Functions
-
-const translatePayload = ({ organization, repository, number, pull_request }) => ({
-  owner: organization.login,
-  repo: repository.name,
-  number,
-  commit_id: pull_request.head.sha
-});
+import translatePayload from './translatePayload';
 
 // Server
 
