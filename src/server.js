@@ -17,7 +17,7 @@ app.get('/', (_, response) => {
 });
 
 app.post('/', ({ headers, body: payload }, response) => {
-  const actions = ['opened', 'reopened', 'synchronize'];
+  const actions = ['opened', 'reopened', 'synchronize', 'edited'];
   const isProcessablePullRequest = headers['x-github-event'] === 'pull_request' && actions.includes(payload.action);
   if (isProcessablePullRequest) {
     payload = translatePayload(payload)
