@@ -34,6 +34,7 @@
     "quotes": [ "error", "single", { "allowTemplateLiterals": true } ],
     "semi": [ "error", "always" ],
     "babel/semi": [ "error", "always" ],
+    "jsx-a11y/media-has-caption": 0,
     "jsx-a11y/label-has-for": [ "error", { "required": { "some": [ "nesting", "id" ] } } ],
     "react/jsx-curly-spacing": [ "error", "never" ],
     "react/jsx-first-prop-new-line": [ "error" ],
