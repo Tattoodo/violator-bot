@@ -1,11 +1,13 @@
 import eslint from 'eslint';
 import getLineMapFromPatchString from './getLineMapFromPatchString';
 import flatMap from './flatMap';
+import eslintConfig from '../config/eslintrc';
 
 const FILE_FILTER = /\.jsx?$/;
 
 const cli = new eslint.CLIEngine({
-  configFile: `${__dirname}/../config/.eslintrc`
+  baseConfig: eslintConfig,
+  useEslintrc: false
 });
 
 const filterFiles = files => files.filter(file => FILE_FILTER.test(file.filename));

@@ -1,10 +1,9 @@
 import stylelint from 'stylelint';
 import getLineMapFromPatchString from './getLineMapFromPatchString';
 import flatMap from './flatMap';
+import stylelintConfig from '../config/stylelintrc';
 
 const FILE_FILTER = /\.css$/;
-
-const CONFIG_FILE = `${__dirname}/../config/.stylelintrc`;
 
 const filterFiles = files => files.filter(file => FILE_FILTER.test(file.filename));
 
@@ -12,7 +11,7 @@ const stylelintMessages = async (content, filename) => {
   const output = await stylelint.lint({
     code: content,
     codeFilename: filename,
-    configFile: CONFIG_FILE
+    config: stylelintConfig
   });
   return output.results[0].warnings;
 };
