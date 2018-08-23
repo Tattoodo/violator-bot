@@ -1,4 +1,4 @@
-import GitHubApi from 'github';
+import GitHubApi from '@octokit/rest';
 import eslintAdapter from './eslintAdapter';
 import stylelintAdapter from './stylelintAdapter';
 import flatMap from './flatMap';
