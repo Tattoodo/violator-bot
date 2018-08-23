@@ -1,5 +1,15 @@
 {
+  "comments": false,
+  "plugins": [
+    "external-helpers"
+  ],
   "presets": [
-    ["env", { "targets": { "node": "current" } }]
+    [
+      "env",
+      {
+        "modules": false,
+        "targets": { "node": "current" }
+      }
+    ]
   ]
 }

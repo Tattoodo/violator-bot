@@ -27,57 +27,21 @@ GITHUB_USERNAME=username # Your bot's Github username
 GITHUB_PASSWORD=password # Your bot's Github password
 ```
 
-You also need to configure ESLint through the [.eslintrc](http://eslint.org/docs/user-guide/configuring). That's where all your linting rules go.
+You also need to configure ESLint through the [config/eslintrc.js](http://eslint.org/docs/user-guide/configuring). That's where all your linting rules go.
 
 Eventually, you'll need to register your bot as a webhook for the repo you want to lint. Simply go the the settings page of your repo and add a new webhook pointing at your server's URL. Leave all the other options at their default value.
 
-## Running
+## Deployment
 
-To start the bot simply run
-```bash
-yarn start
-```
+You deploy the code to AWS as a Lambda function using the `serverless` toolkit.
+This requires the `aws` command line utility, and the correct authorization details.
+See the documentation for `aws` for how to do this.
 
-## Testing
+The `serverless.yml` configuration references some variables from AWS Systems Manager Parameter store. Those are prefixed with `ssm:`.
+Make sure they are defined in the region that you're deploying to.
 
-With the bot running, you can emulate a GitHub web-hook hitting it;
+Then run the deploy script:
 
 ```sh
-curl -X POST \
-  -H "content-type: application/json" \
-  -H "X-GitHub-Event: pull_request" \
-  -d @payload.json \
-  http://localhost:5000/
+yarn deploy
 ```
-
-Where `payload.json` must include at least the following entries:
-
-```json
-{
-  "action": "synchronize",
-  "number": 1234,
-  "pull_request": {
-    "head": {
-      "sha": "a1b2c3d4e5f6…"
-    }
-  },
-  "repository": {
-    "name": "tattoodo-web"
-  },
-  "organization": {
-    "login": "Tattoodo"
-  }
-}
-```
-
-**Notice:** This will send comments and status to GitHub. To avoid that, override the `setStatus` function in the `processPullRequest.js` with something like this:
-
-```js
-const setStatus = (state, message) => console.log(`setStatus: [${state}] ${message}`);
-```
-
-## Moving on
-
-You might have noticed the `Procfile` in the repository. It enables you to run the bot on a [Heroku](https://www.heroku.com) VM.
-
-I find it very convenient for this tool since you don't need many resources to run this small server. Moreover, you will be provided a fixed DNS, which is very convenient to register the webhook from Github.

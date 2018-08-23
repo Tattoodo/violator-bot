@@ -1,4 +1,4 @@
-{
+export default {
   "env": {
     "browser": true,
     "es6": true,
@@ -51,4 +51,4 @@
       "version": "15.4"
     }
   }
-}
+};

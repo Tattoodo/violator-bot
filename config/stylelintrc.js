@@ -1,4 +1,4 @@
-{
+export default {
   "plugins": [
     "stylelint-order"
   ],
@@ -226,4 +226,4 @@
       "nav-left"
     ]
   }
-}
+};

@@ -44,8 +44,8 @@ const makeContentFetcher = (owner, repo, commit_id) => async file => {
   return Buffer.from(response.data.content, 'base64').toString();
 };
 
-const createStatusSetter = (owner, repo, sha) => async (state, description) => {
-  await github.repos.createStatus({
+const createStatusSetter = (owner, repo, sha) => (state, description) => {
+  return github.repos.createStatus({
     owner,
     repo,
     sha,
@@ -88,7 +88,7 @@ const collectViolations = async (owner, repo, number, commit_id) => {
 const processPullRequest = async ({ owner, repo, number, commit_id }) => {
   const setStatus = createStatusSetter(owner, repo, commit_id);
   try {
-    setStatus('pending', 'Linting…');
+    await setStatus('pending', 'Linting…');
 
     let status = 'success';
     let message = 'No linting violations found';
@@ -107,10 +107,10 @@ const processPullRequest = async ({ owner, repo, number, commit_id }) => {
       );
     }
 
-    setStatus(status, message);
+    await setStatus(status, message);
   } catch (error) {
     console.error('=== something bad happened!!!', error);
-    setStatus('error', `Linting failed; ${error.message}`)
+    await setStatus('error', `Linting failed; ${error.message}`);
   }
 };
 
