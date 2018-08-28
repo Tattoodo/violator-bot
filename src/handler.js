@@ -13,7 +13,7 @@ export async function lint(event) {
   const githubEvent = event.headers['X-GitHub-Event'];
 
   if (!githubEvent) {
-    return response('No X-Github-Event found on request', 400);
+    return response('No X-Github-Event found on request', 412);
   }
 
   if (githubEvent === 'ping') {
@@ -21,11 +21,11 @@ export async function lint(event) {
   }
 
   if (githubEvent !== 'pull_request') {
-    return response(`Unsupported X-GitHub-Event; [${githubEvent}]`, 400);
+    return response(`Unsupported X-GitHub-Event; [${githubEvent}]`, 412);
   }
 
   if (!processableActions.includes(payload.action)) {
-    return response(`Unsupported action; [${payload.action}]`, 400);
+    return response(`Unsupported action; [${payload.action}]`, 200);
   }
 
   try {
