@@ -28,11 +28,7 @@ export async function lint(event) {
     return response(`Unsupported action; [${payload.action}]`, 200);
   }
 
-  try {
-    await processPullRequest(translatePayload(payload));
-  } catch (error) {
-    console.warn('Error while processing pull-request', error.message);
-  }
+  await processPullRequest(translatePayload(payload));
 
   return response('Processing done');
 }
