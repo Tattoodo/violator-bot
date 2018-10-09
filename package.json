@@ -9,7 +9,7 @@
     "logs": "serverless logs -f lint -t"
   },
   "dependencies": {
-    "@octokit/rest": "^15.10.0",
+    "@octokit/rest": "^15.13.0",
     "babel-eslint": "^8.2.6",
     "eslint": "^5.4.0",
     "eslint-plugin-babel": "^5.1.0",
