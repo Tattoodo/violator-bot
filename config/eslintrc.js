@@ -34,7 +34,12 @@ export default {
     "quotes": [ "error", "single", { "allowTemplateLiterals": true } ],
     "semi": [ "error", "always" ],
     "babel/semi": [ "error", "always" ],
-    "jsx-a11y/label-has-for": [ "error", { "required": { "some": [ "nesting", "id" ] } } ],
+    "jsx-a11y/label-has-for": 0,
+    "jsx-a11y/label-has-associated-control": ["error", {
+      "controlComponents": [
+        "VerificationCodeInput"
+      ]
+    }],
     "react/jsx-curly-spacing": [ "error", "never" ],
     "react/jsx-first-prop-new-line": [ "error" ],
     "react/jsx-max-props-per-line": [ "error", { "maximum": 2 } ],
