@@ -53,7 +53,7 @@ export default {
   },
   "settings": {
     "react": {
-      "version": "15.4"
+      "version": "15.6"
     }
   }
 };
