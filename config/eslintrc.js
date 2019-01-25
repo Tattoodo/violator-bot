@@ -9,7 +9,7 @@ export default {
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react/recommended",
-    "plugin:css-modules/recommended"
+    // "plugin:css-modules/recommended"
   ],
   "globals": {
     "gapi": true,
@@ -52,8 +52,8 @@ export default {
     "react/no-array-index-key": 1,
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 1,
-    "css-modules/no-unused-class": [1, { "camelCase": true }],
-    "css-modules/no-undef-class": [1, { "camelCase": true }]
+    // "css-modules/no-unused-class": [1, { "camelCase": true }],
+    // "css-modules/no-undef-class": [1, { "camelCase": true,  }]
   },
   "settings": {
     "react": {
