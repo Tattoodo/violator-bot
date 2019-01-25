@@ -8,7 +8,8 @@ export default {
   "extends": [
     "eslint:recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:css-modules/recommended"
   ],
   "globals": {
     "gapi": true,
@@ -25,31 +26,34 @@ export default {
   "plugins": [
     "babel",
     "jsx-a11y",
-    "react"
+    "react",
+    "css-modules"
   ],
   "rules": {
-    "indent": [ "error", 4, { "SwitchCase": 1 } ],
-    "jsx-quotes": [ "error", "prefer-double" ],
-    "no-trailing-spaces": [ "error" ],
-    "quotes": [ "error", "single", { "allowTemplateLiterals": true } ],
-    "semi": [ "error", "always" ],
-    "babel/semi": [ "error", "always" ],
+    "indent": ["error", 4, { "SwitchCase": 1 }],
+    "jsx-quotes": ["error", "prefer-double"],
+    "no-trailing-spaces": ["error"],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "semi": ["error", "always"],
+    "babel/semi": ["error", "always"],
     "jsx-a11y/label-has-for": 0,
     "jsx-a11y/label-has-associated-control": ["error", {
       "controlComponents": [
         "VerificationCodeInput"
       ]
     }],
-    "react/jsx-curly-spacing": [ "error", "never" ],
-    "react/jsx-first-prop-new-line": [ "error" ],
-    "react/jsx-max-props-per-line": [ "error", { "maximum": 2 } ],
+    "react/jsx-curly-spacing": ["error", "never"],
+    "react/jsx-first-prop-new-line": ["error"],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 2 }],
     "react/default-props-match-prop-types": 1,
     "react/display-name": 1,
     "react/no-did-mount-set-state": 1,
     "react/no-deprecated": 1,
     "react/no-array-index-key": 1,
     "react/prop-types": 1,
-    "react/react-in-jsx-scope": 1
+    "react/react-in-jsx-scope": 1,
+    "css-modules/no-unused-class": [1, { "camelCase": true }],
+    "css-modules/no-undef-class": [1, { "camelCase": true }]
   },
   "settings": {
     "react": {
