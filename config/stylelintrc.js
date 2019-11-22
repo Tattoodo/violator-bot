@@ -20,6 +20,12 @@ export default {
     ],
     "indentation": 4,
     "no-descending-specificity": null,
+    "media-feature-name-no-unknown": [
+      true,
+      {
+        "ignoreMediaFeatureNames": "prefers-color-scheme"
+      }
+    ],
     "order/properties-order": [
       "content",
       "quotes",
